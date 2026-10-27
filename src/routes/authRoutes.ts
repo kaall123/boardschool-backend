@@ -9,7 +9,7 @@ router.post('/login', login);
 
 router.get('/me', verifyToken, getMe);
 
-// 📌 2. TAMBAHKAN RUTE EDIT PROFIL INI:
+
 router.put('/profile', verifyToken, updateProfile);
 
 export default router;

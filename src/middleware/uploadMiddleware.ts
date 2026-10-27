@@ -5,14 +5,12 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-// Konfigurasi akun Cloudinary dengan penambahan '!' agar lolos validasi TypeScript
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
     api_key: process.env.CLOUDINARY_API_KEY!,
     api_secret: process.env.CLOUDINARY_API_SECRET!,
 });
 
-// Atur penyimpanan Cloudinary via multer
 const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
     params: {

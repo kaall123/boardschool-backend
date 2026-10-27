@@ -28,8 +28,19 @@ export const register = async (req: Request, res: Response): Promise<void> => {
         );
 
         res.status(201).json({ message: 'Registrasi berhasil! sung aja login!' });
-    } catch (error) {
-        res.status(500).json({ message: 'Terjadi kesalahan pada server!!!!!!!!', error });
+    } catch (error: any) {
+        console.error("ERROR REGISTER:", error);
+        
+        // Deteksi jika email kembar di database
+        if (error.code === 'ER_DUP_ENTRY') {
+            res.status(400).json({ message: 'Email sudah terdaftar!' });
+            return;
+        }
+
+        res.status(500).json({ 
+            message: 'Terjadi kesalahan pada server', 
+            error: error.message || 'Unknown error' 
+        });
     }
 };
 
@@ -72,8 +83,12 @@ export const login = async (req: Request, res: Response): Promise<void> => {
                 role: user.role
             }
         });
-    } catch (error) {
-        res.status(500).json({ message: 'Terjadi kesalahan pada server', error });
+    } catch (error: any) {
+        console.error("ERROR LOGIN:", error);
+        res.status(500).json({ 
+            message: 'Terjadi kesalahan pada server', 
+            error: error.message || 'Unknown error' 
+        });
     }
 };
 
@@ -94,11 +109,15 @@ export const getMe = async (req: any, res: Response): Promise<void> => {
 
         res.json(rows[0]);
     } catch (error: any) {
-        res.status(500).json({ message: 'Terjadi kesalahan server', error: error.message });
+        console.error("ERROR GETME:", error);
+        res.status(500).json({ 
+            message: 'Terjadi kesalahan server', 
+            error: error.message || 'Unknown error' 
+        });
     }
 };
 
-// 4. 🟢 UPDATE PROFILE (Baru ditambahkan)
+// 4. Update Profile 
 export const updateProfile = async (req: any, res: Response): Promise<void> => {
     try {
         const userId = req.user.id; // Dari middleware verifikasi token JWT
@@ -138,11 +157,17 @@ export const updateProfile = async (req: any, res: Response): Promise<void> => {
         });
 
     } catch (error: any) {
+        console.error("ERROR UPDATE PROFILE:", error);
+        
         // Deteksi jika email kembar / sudah digunakan akun lain
         if (error.code === 'ER_DUP_ENTRY') {
             res.status(400).json({ message: 'Email sudah digunakan oleh akun lain!' });
             return;
         }
-        res.status(500).json({ message: 'Terjadi kesalahan pada server', error: error.message });
+        
+        res.status(500).json({ 
+            message: 'Terjadi kesalahan pada server', 
+            error: error.message || 'Unknown error' 
+        });
     }
 };
